@@ -10,7 +10,7 @@
             class="link"
             v-for="item in menus"
             :key="item.path"
-            @click="handleLink(item, item.path)"
+            @click="handleLink(item, item.name)"
             >{{ item.meta.title }}</el-link
           >
         </p>
@@ -28,7 +28,7 @@
               class="link"
               v-for="(item, index) in selectMenu.children"
               :key="index"
-              @click="handleLink(selectMenu, item.path)"
+              @click="handleLink(selectMenu, item.name)"
               >{{ item.meta.title }}</el-link
             >
           </p>
@@ -68,11 +68,11 @@ export default class Home extends Vue {
     }
   }
 
-  handleLink(item: RouteConfig, path: string) {
+  handleLink(item: RouteConfig, name: string) {
     this.selectMenu = Object.assign({}, item);
     this.$forceUpdate();
-    this.$router.push(path);
-    console.log(this.selectMenu);
+    this.$router.push({ name: name });
+    console.log(name);
   }
 }
 </script>

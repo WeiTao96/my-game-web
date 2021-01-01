@@ -1,5 +1,7 @@
 import { RouteConfig } from 'vue-router'
 import Land from "@/views/assets/land.vue"
+import Treasure from "@/views/assets/treasure.vue"
+import Good from "@/views/assets/good.vue"
 import Layout from '@/layout/index.vue'
 const assetsRoutes: RouteConfig =
 {
@@ -28,7 +30,7 @@ const assetsRoutes: RouteConfig =
             // route level code-splitting
             // this generates a separate chunk (about.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
-            component: () => import(/* webpackChunkName: "about" */ '@/views/assets/treasure.vue'),
+            component: Treasure,
             meta: {
                 title: '珍宝'
             },
@@ -39,7 +41,7 @@ const assetsRoutes: RouteConfig =
             // route level code-splitting
             // this generates a separate chunk (about.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
-            component: () => import(/* webpackChunkName: "about" */ '@/views/assets/good.vue'),
+            component: Good,
             meta: {
                 title: '杂物'
             },
