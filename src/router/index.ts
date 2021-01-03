@@ -4,6 +4,10 @@ import Home from '../views/Home.vue'
 import Layout from '@/layout/index.vue'
 
 import assetsRoutes from './module/assets'
+import messageRoutes from './module/message'
+import movesRoutes from './module/moves'
+import travelRoutes from './module/travel'
+import forcesRoutes from './module/forces'
 
 Vue.use(VueRouter)
 
@@ -45,6 +49,10 @@ const routes: Array<RouteConfig> = [
   },
 
   assetsRoutes,
+  messageRoutes,
+  movesRoutes,
+  travelRoutes,
+  forcesRoutes,
   {
     path: '/about',
     name: 'About',
