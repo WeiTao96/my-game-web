@@ -24,6 +24,22 @@ const routes: Array<RouteConfig> = [
         meta: {
           title: '首页'
         },
+      },
+      {
+        path: 'follower',
+        name: 'Follower',
+        component: () => import(/* webpackChunkName: "about" */ '@/views/gang/follower.vue'),
+        meta: {
+          title: '帮众'
+        },
+      },
+      {
+        path: 'peopleNetwork',
+        name: 'PeopleNetwork',
+        component: () => import(/* webpackChunkName: "about" */ '@/views/gang/peopleNetwork.vue'),
+        meta: {
+          title: '关系谱'
+        },
       }
     ]
   },
