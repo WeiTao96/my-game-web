@@ -36,6 +36,7 @@
           <el-button
             type="text"
             style="color: red"
+            disabled
             @click="handleDelete(item._id)"
             >驱除出门派</el-button
           >
