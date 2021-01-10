@@ -159,7 +159,6 @@ export default class Follower extends Vue {
   async getList() {
     const res = await getAllPerson({});
     this.list = res.data;
-    console.log(this.list);
   }
 
   async handleOpenDialog(id: string, value: string) {
