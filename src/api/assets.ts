@@ -20,3 +20,15 @@ export const handleRent = (id: any) =>
         url: url + `/assets/land/rent/${id}`,
         method: 'get'
     })
+
+export const handleRecover = (id: any) =>
+    axios({
+        url: url + `/assets/land/recover/${id}`,
+        method: 'get'
+    })
+
+export const handleDelete = (id: any) =>
+    axios({
+        url: url + `/assets/land/${id}`,
+        method: 'delete'
+    })

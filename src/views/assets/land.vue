@@ -35,30 +35,57 @@
           <el-button
             v-if="scope.row.type === 0"
             type="text"
-            @click="handleBuyANewLand()"
+            @click="handleBuild(scope.row._id)"
             >建造</el-button
           >
           <el-button
             v-if="scope.row.type === 0"
             type="text"
-            @click="handleBuyANewLand()"
+            @click="handleSell(scope.row._id)"
             >出售</el-button
           >
           <el-button
-            v-if="scope.row.type === 0"
+            v-if="scope.row.type === 1 && scope.row.s_type === 1"
             type="text"
-            @click="handleBuyANewLand()"
-            >出售</el-button
+            @click="handleRecover(scope.row._id)"
+            >回收</el-button
           >
         </template>
       </el-table-column>
     </el-table>
+
+    <el-dialog
+      title="建造建筑"
+      :visible.sync="centerDialogVisible"
+      width="30%"
+      center
+    >
+      <div class="center-dialog">
+        <el-cascader
+          :options="options"
+          @change="handleChange"
+          :show-all-levels="false"
+        ></el-cascader>
+      </div>
+      <p>{{ buildValue | buildInfoFilter }}</p>
+      <p v-if="buildValue">花费：{{ buildValue | buildSpendFilter }}</p>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="centerDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleClick">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { getANewLand, getAllLand, handleRent } from "@/api/assets";
+import {
+  getANewLand,
+  getAllLand,
+  handleRent,
+  handleRecover,
+  handleDelete,
+} from "@/api/assets";
 @Component({
   name: "Land",
   filters: {
@@ -77,17 +104,72 @@ import { getANewLand, getAllLand, handleRent } from "@/api/assets";
       };
       return statusMap[status];
     },
+    buildInfoFilter: (type: string) => {
+      const statusMap: { [key: string]: string } = {
+        hospital: "建立医馆，为周围群众治疗疾病，帮众恢复速度增加 20 %",
+        bar: "建立酒馆为路过百姓提供歇息，帮众每日好感增加 1",
+        gym: "为帮众提供练功场所",
+        smithy: "开启装备打造功能",
+      };
+      return statusMap[type];
+    },
+    buildSpendFilter: (type: string) => {
+      const statusMap: { [key: string]: string } = {
+        hospital: "200000",
+        bar: "150000",
+        gym: "50000",
+        smithy: "100000",
+      };
+      return statusMap[type];
+    },
   },
 })
 export default class Land extends Vue {
   private tableData = [];
+  private buildValue = "";
+  private centerDialogVisible = false;
+  private selectId = "";
+  private options = [
+    {
+      value: "income",
+      label: "收益建筑",
+      children: [
+        {
+          value: "hospital",
+          label: "医馆",
+        },
+        {
+          value: "bar",
+          label: "酒馆",
+        },
+      ],
+    },
+    {
+      value: "function",
+      label: "功能建筑",
+      children: [
+        {
+          value: "gym",
+          label: "练功房",
+        },
+        {
+          value: "smithy",
+          label: "铁匠铺",
+        },
+      ],
+    },
+  ];
   created() {
     this.getList();
   }
   private async getList() {
     const res = await getAllLand({});
     this.tableData = res.data;
-    console.log(res);
+  }
+
+  private async handleChange(value: string[]) {
+    console.log(value);
+    this.buildValue = value[1];
   }
 
   private handleBuyANewLand() {
@@ -106,6 +188,28 @@ export default class Land extends Vue {
       } else {
         this.$message({
           message: "购买失败",
+          type: "warning",
+        });
+      }
+    });
+  }
+
+  private handleSell(id: string) {
+    this.$confirm("此操作将出售获得 15000 金钱?是否确认", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning",
+    }).then(async () => {
+      const res = await handleDelete(id);
+      if (res.status === 200) {
+        this.$message({
+          message: "出售成功",
+          type: "success",
+        });
+        this.getList();
+      } else {
+        this.$message({
+          message: "出售失败",
           type: "warning",
         });
       }
@@ -133,7 +237,38 @@ export default class Land extends Vue {
       }
     });
   }
+
+  private handleRecover(id: string) {
+    this.$confirm("此操作将回收农田，并给予 5000 违约金?是否确认", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning",
+    }).then(async () => {
+      const res = await handleRecover(id);
+      if (res.status === 200) {
+        this.$message({
+          message: "回收成功",
+          type: "success",
+        });
+        this.getList();
+      } else {
+        this.$message({
+          message: "回收失败",
+          type: "warning",
+        });
+      }
+    });
+  }
+
+  private handleBuild(id: string) {
+    this.selectId = id;
+    this.centerDialogVisible = true;
+  }
 }
 </script>
 <style lang="scss" scoped>
+.center-dialog {
+  display: flex;
+  justify-content: center;
+}
 </style>
