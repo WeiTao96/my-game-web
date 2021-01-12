@@ -15,20 +15,27 @@ export const getAllLand = (params: any) =>
     })
 
 
-export const handleRent = (id: any) =>
+export const handleLandRent = (id: any) =>
     axios({
         url: url + `/assets/land/rent/${id}`,
         method: 'get'
     })
 
-export const handleRecover = (id: any) =>
+export const handleLandRecover = (id: any) =>
     axios({
         url: url + `/assets/land/recover/${id}`,
         method: 'get'
     })
 
-export const handleDelete = (id: any) =>
+export const handleLandDelete = (id: any) =>
     axios({
         url: url + `/assets/land/${id}`,
         method: 'delete'
+    })
+
+export const handleBuildUpdate = (id: string, params: any) =>
+    axios({
+        url: url + `/assets/land/build/${id}`,
+        method: 'get',
+        params
     })

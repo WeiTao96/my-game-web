@@ -29,7 +29,7 @@
           <el-button
             v-if="scope.row.type === 0"
             type="text"
-            @click="handleRent(scope.row._id)"
+            @click="handleLandRent(scope.row._id)"
             >出租</el-button
           >
           <el-button
@@ -39,7 +39,7 @@
             >建造</el-button
           >
           <el-button
-            v-if="scope.row.type === 0"
+            v-if="scope.row.s_type !== 1"
             type="text"
             @click="handleSell(scope.row._id)"
             >出售</el-button
@@ -47,8 +47,21 @@
           <el-button
             v-if="scope.row.type === 1 && scope.row.s_type === 1"
             type="text"
-            @click="handleRecover(scope.row._id)"
+            @click="handleLandRecover(scope.row._id)"
             >回收</el-button
+          >
+          <el-button
+            v-if="scope.row.type === 2 && scope.row.s_type === 2"
+            type="text"
+            >打造装备</el-button
+          >
+          <el-button v-if="scope.row.type !== 0" type="text" style="color: red"
+            >关闭</el-button
+          >
+          <el-button
+            v-if="canUpdateBuilding.includes(scope.row.s_type)"
+            type="text"
+            >升级</el-button
           >
         </template>
       </el-table-column>
@@ -82,9 +95,10 @@ import { Component, Vue } from "vue-property-decorator";
 import {
   getANewLand,
   getAllLand,
-  handleRent,
-  handleRecover,
-  handleDelete,
+  handleLandRent,
+  handleLandRecover,
+  handleLandDelete,
+  handleBuildUpdate,
 } from "@/api/assets";
 @Component({
   name: "Land",
@@ -129,6 +143,7 @@ export default class Land extends Vue {
   private buildValue = "";
   private centerDialogVisible = false;
   private selectId = "";
+  private canUpdateBuilding = [2, 3, 4];
   private options = [
     {
       value: "income",
@@ -168,8 +183,27 @@ export default class Land extends Vue {
   }
 
   private async handleChange(value: string[]) {
-    console.log(value);
     this.buildValue = value[1];
+  }
+
+  private async handleClick() {
+    const res = await handleBuildUpdate(this.selectId, {
+      buildName: this.buildValue,
+    });
+    if (res.status === 200) {
+      this.$message({
+        message: "建造成功",
+        type: "success",
+      });
+      this.centerDialogVisible = false;
+      this.getList();
+    } else {
+      this.$message({
+        message: "建造失败",
+        type: "warning",
+      });
+      this.centerDialogVisible = false;
+    }
   }
 
   private handleBuyANewLand() {
@@ -200,7 +234,7 @@ export default class Land extends Vue {
       cancelButtonText: "取消",
       type: "warning",
     }).then(async () => {
-      const res = await handleDelete(id);
+      const res = await handleLandDelete(id);
       if (res.status === 200) {
         this.$message({
           message: "出售成功",
@@ -216,13 +250,13 @@ export default class Land extends Vue {
     });
   }
 
-  private handleRent(id: string) {
+  private handleLandRent(id: string) {
     this.$confirm("此操作将荒地出租给农民耕种?是否确认", "提示", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
       type: "warning",
     }).then(async () => {
-      const res = await handleRent(id);
+      const res = await handleLandRent(id);
       if (res.status === 200) {
         this.$message({
           message: "出租成功",
@@ -238,13 +272,13 @@ export default class Land extends Vue {
     });
   }
 
-  private handleRecover(id: string) {
+  private handleLandRecover(id: string) {
     this.$confirm("此操作将回收农田，并给予 5000 违约金?是否确认", "提示", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
       type: "warning",
     }).then(async () => {
-      const res = await handleRecover(id);
+      const res = await handleLandRecover(id);
       if (res.status === 200) {
         this.$message({
           message: "回收成功",
