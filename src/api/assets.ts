@@ -39,3 +39,10 @@ export const handleBuildUpdate = (id: string, params: any) =>
         method: 'get',
         params
     })
+
+export const getAllEquipment = (params: any) =>
+    axios({
+        url: url + `/equipment/all`,
+        method: 'get',
+        params
+    })
